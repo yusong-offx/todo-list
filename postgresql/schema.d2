@@ -1,0 +1,22 @@
+USERS: {
+    shape: sql_table
+
+    id: serial {constraint: primary_key}
+    login_id: varchar(20) {constraint: unique}
+    login_passworld: varchar(60)
+}
+
+TODOS: {
+    shape: sql_table
+
+    id: serial {constraint: primary_key}
+    user_id: int {constraint: foreign_key}
+    title: varchar(50)
+    contents: varchar(1000)
+    create_date: datetime (default: now)
+    lastmodified_date: datetime (default: now)
+
+}
+
+direction: left
+USERS.id <- TODOS.user_id
