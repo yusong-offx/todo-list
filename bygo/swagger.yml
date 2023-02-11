@@ -1,0 +1,36 @@
+openapi: 3.0.0
+servers:
+  - description: Fiber framework written by Go.
+    url: http://yusong-offx.link
+info:
+  version: "1.0.0"
+  title: Todo-list
+  description: Simple todo-list API
+paths:
+  /:
+    get:
+      tags:
+        - Device
+        - Z-Wave
+      description: for request test
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+  /login:
+    post:
+      description: Authentication by login id and password
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success to login
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: create
