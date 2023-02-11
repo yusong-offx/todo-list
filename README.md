@@ -5,7 +5,7 @@ This is simple todo-list for showing my code style.
 
 ## Struct
 ---
-![structure](./struct.svg)
+![structure](./assets/struct.svg)
 
 * All program service on container
 
