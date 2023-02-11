@@ -1,0 +1,18 @@
+Cloud: {
+    Docker:{
+        Flutter(dart): Container {
+            Flutter(dart).shape: Text
+        }
+        Fiber(Go): Container{
+            Fiber(Go).shape: Text
+        }
+        Postgresql: Container{
+            Postgresql.shape: Text
+        }
+        Flutter(dart) <-> Fiber(Go) <-> Postgresql
+    }
+}
+
+direction: right
+User.shape: person
+User <-> Cloud.Docker.Flutter(dart)

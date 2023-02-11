@@ -8,7 +8,11 @@ type SignUpInfo struct {
 }
 
 func (s SignUpInfo) SaveDB() error {
-
+	if _, err := DB.Exec(
+		"INSERT INTO USERS (login_id, login_password) VALUE ($1, $2)",
+		s.LoginID, s.LoginPassword); err != nil {
+		return err
+	}
 	return nil
 }
 
