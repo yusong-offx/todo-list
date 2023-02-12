@@ -1,5 +1,6 @@
 # Todo-list
-If you want to test, you have to install docker and flutter.
+If you want to test, you have to install docker and flutter.   
+And command below line.
 ```shell
 # In docker-compose file directory
 docker compose up -d
