@@ -2,6 +2,8 @@ openapi: 3.0.0
 servers:
   - description: Fiber framework written by Go.
     url: http://localhost
+  - description: Fiber framework written by Go.
+    url: http://yusong-offx.link
 
 info:
   version: "1.0.0"
@@ -128,6 +130,69 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
+  /todo/done:
+    put:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary: Change done or not done
+      description: 
+        Only modify column. Done or not done.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - id
+                - user_id
+                - done
+              properties:
+                id:
+                  type: integer
+                user_id:
+                  type: integer
+                done:
+                  type: boolean
+      responses:
+        200:
+          description: Success to update
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+      
+
+  /todo/{id}:
+    delete:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary: Delete todo element
+      description: 
+        Delete todo element by todo_id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success to delete
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
   /todo/user/{id}:
     get:
       tags:
@@ -172,31 +237,7 @@ paths:
               schema:
                 type: string
 
-  /todo/{id}:
-    delete:
-      tags:
-        - Todos
-      security:
-        - JWT: []
-      summary: Delete todo element
-      description: 
-        Delete todo element by todo_id
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: Success to delete
-          content:
-            text/plain:
-              schema:
-                type: string
-                example: OK
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
+
 
 components:
   schemas:
@@ -224,6 +265,8 @@ components:
           type: integer
         user_id:
           type: integer
+        done:
+          type: boolean
         title:
           type: string
           minimum: 1
@@ -284,4 +327,9 @@ components:
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: Access token is missing or invalid
 

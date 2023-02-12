@@ -7,4 +7,5 @@ import (
 
 func AllPut(app *fiber.App) {
 	app.Put("/todo", components.ProtectByJWT(), components.PutTodoByID)
+	app.Put("/todo/done", components.ProtectByJWT(), components.PutTodoDoneByID)
 }

@@ -18,9 +18,9 @@ services:
     depends_on:
       - db-postgresql
 
-  # app-bygo:
-  #   build: ./bygo
-  #   ports:
-  #     - 80:3000
-  #   depends_on:
-  #     - db-postgresql
+  app-bygo:
+    build: ./bygo
+    ports:
+      - 80:3000
+    depends_on:
+      - db-postgresql

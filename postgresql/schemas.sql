@@ -10,6 +10,7 @@ CREATE TABLE USERS (
 CREATE TABLE TODOS (
     id serial primary key,
     user_id integer references USERS(id),
+    done boolean default false,
     title varchar(50),
     contents varchar(1000),
     create_date timestamp with time zone Default now(),

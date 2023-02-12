@@ -11,6 +11,7 @@ import (
 type Todo struct {
 	ID               int       `json:"id"`
 	UserID           int       `json:"user_id"`
+	Done             bool      `json:"done"`
 	Title            string    `json:"title"`
 	Contents         string    `json:"contents"`
 	CreateDate       time.Time `json:"create_date"`
@@ -62,8 +63,9 @@ func GetTodoByUserID(c *fiber.Ctx) error {
 		return err
 	}
 	// Get todos from DB
+
 	switch rows, err := DB.Query(
-		"SELECT * FROM TODOS WHERE user_id = $1",
+		"SELECT * FROM TODOS WHERE user_id = $1 ORDER BY done, lastmodified_date DESC",
 		userID); err {
 	case nil:
 		todos, el := []Todo{}, Todo{}
@@ -71,6 +73,7 @@ func GetTodoByUserID(c *fiber.Ctx) error {
 			if err := rows.Scan(
 				&el.ID,
 				&el.UserID,
+				&el.Done,
 				&el.Title,
 				&el.Contents,
 				&el.CreateDate,
@@ -81,8 +84,9 @@ func GetTodoByUserID(c *fiber.Ctx) error {
 			todos = append(todos, el)
 		}
 		return c.JSON(todos)
-	// If no query, response 400
+	// If no param, response 400
 	default:
+
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 }
@@ -125,6 +129,28 @@ func PutTodoByID(c *fiber.Ctx) error {
 		"UPDATE TODOS SET title=$1, contents=$2, lastmodified_date=$3 WHERE id = $4",
 		todo.Title,
 		todo.Contents,
+		time.Now(),
+		todo.ID,
+	); err != nil {
+		return err
+	}
+	return c.SendStatus(fiber.StatusOK)
+}
+
+func PutTodoDoneByID(c *fiber.Ctx) error {
+	// Get update source from body
+	todo := Todo{}
+	if err := c.BodyParser(&todo); err != nil {
+		return err
+	}
+	// Compare request_user_id and jwt_user_id
+	if !UserCheck(c, todo.UserID) {
+		return c.SendStatus(fiber.StatusUnauthorized)
+	}
+	// Update from DB
+	if _, err := DB.Exec(
+		"UPDATE TODOS SET done=$1, lastmodified_date=$2 WHERE id = $3",
+		todo.Done,
 		time.Now(),
 		todo.ID,
 	); err != nil {

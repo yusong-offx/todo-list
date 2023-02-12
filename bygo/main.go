@@ -16,7 +16,7 @@ func main() {
 
 	// Server init
 	app := fiber.New(fiber.Config{
-		Prefork: true,
+		Prefork: false,
 	})
 
 	route.AllMiddleWare(app)

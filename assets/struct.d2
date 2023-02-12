@@ -1,18 +1,18 @@
 Cloud: {
     Docker-Compose:{
-        Flutter(dart): Container {
-            Flutter(dart).shape: Text
-        }
         Fiber(Go): Container{
             Fiber(Go).shape: Text
         }
         Postgresql: Container{
             Postgresql.shape: Text
         }
-        Flutter(dart) <-> Fiber(Go) <-> Postgresql
+        Fiber(Go) <-> Postgresql
     }
 }
 
 direction: right
+Flutter(Dart): Container {
+    Flutter(Dart).shape: Text
+}
 User.shape: person
-User <-> Cloud.Docker-Compose.Flutter(dart)
+User <-> Flutter(Dart) <-> Cloud.Docker-Compose.Fiber(Go)

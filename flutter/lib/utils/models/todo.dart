@@ -1,11 +1,15 @@
 class Todo {
-  bool done;
+  int id;
+  int userID;
   String title;
+  bool done;
   String? contents;
   DateTime createDate;
   DateTime lastModifiedDate;
 
   Todo({
+    required this.id,
+    required this.userID,
     required this.done,
     required this.title,
     required this.contents,
@@ -14,9 +18,11 @@ class Todo {
   });
 
   Todo.fromJSON(Map<String, dynamic> json)
-      : done = json["done"],
+      : id = json["id"],
+        userID = json["user_id"],
+        done = json["done"],
         title = json["title"],
-        contents = json["contens"],
-        createDate = json["createDate"],
-        lastModifiedDate = json["lastModifiedDate"];
+        contents = json["contents"],
+        createDate = DateTime.parse(json["create_date"]),
+        lastModifiedDate = DateTime.parse(json["lastmodified_date"]);
 }

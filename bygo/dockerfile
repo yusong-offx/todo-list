@@ -4,8 +4,7 @@ FROM golang
 WORKDIR /forbuild
 COPY . /forbuild/
 
-RUN go install
-RUN go build -o appServer -ldflags '-s -w' main.go
+RUN go install && go build -o appserver -ldflags '-s -w' main.go
 
 # 1
 FROM alpine
@@ -14,7 +13,7 @@ RUN apk update
 RUN apk upgrade
 RUN apk add icu-libs gcompat krb5-libs libstdc++ libgcc libc6-compat icu-libs
 WORKDIR /
-COPY --from=0 /forbuild/appServer /
+COPY --from=0 /forbuild/appserver /bin/
 EXPOSE 3000
 
-CMD ["./appServer"]
+CMD ["./bin/appserver"]

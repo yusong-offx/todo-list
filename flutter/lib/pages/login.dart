@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -11,22 +12,68 @@ class Login extends StatefulWidget {
 
 class LoginState extends State<Login> {
   final GlobalKey<FormState> loginKey = GlobalKey<FormState>();
+  bool buttonVisible = true;
   Map<String, dynamic> userData = {};
 
-  void onLoginPressed() {
+  void onLoginPressed() async {
     if (!loginKey.currentState!.validate()) {
       return;
     }
-
+    // Block button (login, sign up)
+    setState(() => buttonVisible = !buttonVisible);
+    // Save textformfield values
+    loginKey.currentState!.save();
+    // Call login api
+    await singleton.apiService.postLogin(userData).then(
+      (success) {
+        // Login success
+        if (success) {
+          return Navigator.of(context).pushNamed("/home");
+        }
+        // Login fail
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: const Text("Check ID/Password"),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text("close"),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          ),
+        );
+      },
+    );
     // Buffer clear
     userData.clear();
+    setState(() => buttonVisible = !buttonVisible);
   }
 
-  void onSignUpPressed() {
+  void onSignUpPressed() async {
     if (!loginKey.currentState!.validate()) {
       return;
     }
-
+    // Save textformfield values
+    loginKey.currentState!.save();
+    await singleton.apiService.postSignUp(userData).then(
+      (success) {
+        // Sign up success / fail
+        var message = success ? "Success to Sign up" : "Please change ID";
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            content: Text(message),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text("close"),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            ],
+          ),
+        );
+      },
+    );
     // Buffer clear
     userData.clear();
   }
@@ -99,17 +146,20 @@ class LoginState extends State<Login> {
                       ]),
                     ),
                     const SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                            onPressed: onLoginPressed,
-                            child: const Text("login")),
-                        const SizedBox(width: 5),
-                        TextButton(
-                            onPressed: () {}, child: const Text("sign up"))
-                      ],
-                    )
+                    buttonVisible
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                  onPressed: onLoginPressed,
+                                  child: const Text("login")),
+                              const SizedBox(width: 5),
+                              TextButton(
+                                  onPressed: onSignUpPressed,
+                                  child: const Text("sign up"))
+                            ],
+                          )
+                        : const CircularProgressIndicator(),
                   ],
                 ),
               )

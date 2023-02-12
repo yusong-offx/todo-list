@@ -28,6 +28,7 @@ func jwtError(c *fiber.Ctx, err error) error {
 	return c.SendStatus(fiber.StatusUnauthorized)
 }
 
+// Generate JWT with user_id
 func GenerateJWT(userClaim jwt.MapClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userClaim)
 	tokenString, err := token.SignedString(JWT_SCRETE_KEY)

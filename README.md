@@ -1,16 +1,48 @@
 # Todo-list
 ## Object
 This is simple todo-list for showing my code style.   
-This project use flutter, fiber(Go framework), postgresql, docker-compose, swagger(yml), d2(create schema graph).   
+This project use   
+- flutter(android)
+- fiber(Go framework)
+- postgresql
+- docker-compose
+- swagger(yml)
+- d2(for create schema graph).
+  
 All codes are written by me.
+
+## MVP
+### User - Login/Sign-up
+You can login and sign up at same textformfield.   
+User's login_id is unique. (no duplicate)   
+User's login_password save by bcrypt.
+<details>
+<summary>Refer images</summary>
+
+<image src="./assets/login.png" width=300>
+<image src="./assets/login-wrong.png" width=300>
+<image src="./assets/login-signup.png" width=300>
+<image src="./assets/login-signup-wrong.png" width=300>
+</details>
+<br>
+
+### Todo - Post/Update/Delete
+You can get todo-list order by not done, descending(newest) lastmodified_date.   
+You can post, update, delete todo.
+
+<details>
+<summary>Refer images</summary>
+
+<image src="./assets/home-post.png" width=300>
+<image src="./assets/home-update-delete.png" width=300>
+</details>
+<br>
 
 ## Struct
 ![structure](./assets/struct.svg)
 
 * All program service on container
-
 * No webserver
-
 
 ## Details
 Please refer below link.   
@@ -19,37 +51,27 @@ Please refer below link.
 - [Postgresql](./postgresql/README.md)
 
 
+*Fiber(Go) dockerfile build by multi-stage. (use alpine linux)   
+*Postgresql dockerfile copy sql file and generate database.   
 *About dockerfile you can check through this repo docker-compose.yml file.   
 *You must not write all secrete key in code. This project is not for deploying.
 
 
 ## Future
 ---
-- all - add explaination
----
-- flutter - auto login   
-- flutter - sort by something...
----
-- fiber - generate jwt
-- fiber - swagger
----
-- rust - make by rocket
----
-
-real future
-flutter
-- auto login
-
-fiber
-- redis cache
-- todo pages paging
-- logger
-- write test code
-
-postgresql
-- add fiber seach function and full-text search column
-
-docker-compose
-- migrate to k8s
-
-## fix readme typo
+- flutter
+  - auto-login using preference.
+  - various sort todo elements
+  - auto refresh
+- fiber
+  - full text search / search function
+  - write test code
+  - swagger server
+  - redis cache
+  - todo paging
+  - logger
+- postgresql
+  - full text search
+  - try to elastic search
+- docker-compose
+  - migrate to k8s

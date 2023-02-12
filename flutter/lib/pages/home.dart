@@ -4,22 +4,10 @@ import 'package:todo/pages/components/appbar.dart';
 
 import '../utils/models/todo.dart';
 
-final mockData = [
-  Todo(
-    done: true,
-    title: "hello world!",
-    contents: "work hard play hard",
-    createDate: DateTime.now(),
-    lastModifiedDate: DateTime.now(),
-  ),
-  Todo(
-    done: false,
-    title: "hello world!",
-    contents: "work hard play hard",
-    createDate: DateTime.now(),
-    lastModifiedDate: DateTime.now(),
-  )
-];
+enum SubmitAPI {
+  update,
+  post,
+}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -33,48 +21,96 @@ class _MyHomePageState extends State<MyHomePage> {
   // Submit Form and buffer
   final GlobalKey<FormState> todoKey = GlobalKey<FormState>();
   Map<String, dynamic> userData = {};
+  List<Todo> todos = [];
+
+  // Fetch data init state
+  // Todo list order by not done, newest of lastmodified_date
+  @override
+  void initState() {
+    singleton.apiService.getTodos().then((value) {
+      todos.clear();
+      todos.addAll(value);
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  // Refresh function
+  Future<void> refreshTodos() async {
+    singleton.apiService.getTodos().then((value) {
+      todos = value;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: myAppBar(context, "TODO LIST"),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 95,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              itemCount: mockData.length,
-              itemBuilder: (context, index) => todoTextElement(context, index),
+      body: RefreshIndicator(
+        onRefresh: refreshTodos,
+        child: Column(
+          children: [
+            Expanded(
+              flex: 95,
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                itemCount: todos.length,
+                itemBuilder: (context, index) =>
+                    todoTextElement(context, index),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-      floatingActionButton: todoAddButton(null),
+      floatingActionButton: todoAddButton(),
     );
   }
 
+  // Update done/not done
+  void onDoneCheckAPI(Todo todo) {
+    singleton.apiService.putDoneCheck({
+      "done": todo.done,
+      "id": todo.id,
+      "user_id": todo.userID,
+    });
+  }
+
+  // Todo elements (Row)
   Widget todoTextElement(context, index) {
-    Todo todo = mockData[index];
+    Todo todo = todos[index];
+    DateTime modifiedTime = todo.lastModifiedDate;
+    String date =
+        "${modifiedTime.year}/${modifiedTime.month}/${modifiedTime.day}-${modifiedTime.hour}:${modifiedTime.minute}:${modifiedTime.second}";
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Checkbox(
-              value: todo.done,
-              onChanged: (done) => setState(() {
-                    todo.done = done!;
-                  })),
-          TextButton(
-            onPressed: () => todoDialog(todo),
-            child: Text(todo.title),
-          )
+          Row(
+            children: [
+              Checkbox(
+                  value: todo.done,
+                  onChanged: (done) => setState(() {
+                        todo.done = done!;
+                        onDoneCheckAPI(todo);
+                      })),
+              TextButton(
+                onPressed: () => todoDialog(todo),
+                child: Text(todo.title),
+              )
+            ],
+          ),
+          Text(date),
         ],
       ),
     );
   }
 
+  // Add, Update Button
   void todoDialog(Todo? data) {
+    // Add, Update determin api
+    var submitApi = data == null ? SubmitAPI.post : SubmitAPI.update;
     Widget openDialog(BuildContext context) {
       List<Widget> items = [
         Text(
@@ -99,8 +135,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          // Delete button only for todo element
+          if (data != null)
+            OutlinedButton(
+              child: const Text("delete"),
+              onPressed: () {
+                singleton.apiService.deleteTodo(data.id);
+                Navigator.pop(context);
+              },
+            ),
+          const SizedBox(width: 10),
           OutlinedButton(
-            onPressed: () {
+            onPressed: () async {
               // Check validation
               // Validations are in each TextFormField
               if (!todoKey.currentState!.validate()) {
@@ -108,7 +154,12 @@ class _MyHomePageState extends State<MyHomePage> {
               }
               todoKey.currentState!.save();
               // Submit API
-
+              if (submitApi == SubmitAPI.update) {
+                userData["id"] = data!.id;
+                singleton.apiService.putTodo(userData);
+              } else {
+                singleton.apiService.postTodo(userData);
+              }
               // Reset and pop
               todoKey.currentState!.reset();
               Navigator.of(context).pop();
@@ -145,11 +196,11 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(context: context, builder: openDialog);
   }
 
-  Widget todoAddButton(Todo? data) {
+  Widget todoAddButton() {
     // Clear Submit form buffer
     userData.clear();
     return FloatingActionButton(
-      onPressed: () => todoDialog(data),
+      onPressed: () => todoDialog(null),
       tooltip: 'Add',
       child: const Icon(Icons.add),
     );

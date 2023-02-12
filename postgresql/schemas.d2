@@ -11,6 +11,7 @@ TODOS: {
 
     id: serial {constraint: primary_key}
     user_id: int {constraint: foreign_key}
+    done: bool (not null)
     title: varchar(50)
     contents: varchar(1000)
     create_date: datetime (default: now)
