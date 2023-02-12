@@ -1,4 +1,13 @@
 # Todo-list
+If you want to test, you have to install docker and flutter.
+```shell
+# In docker-compose file directory
+docker compose up -d
+
+# In flutter project directory
+flutter run ./lib/main.dart
+```
+
 ## Object
 This is simple todo-list for showing my code style.   
 This project use   
@@ -7,8 +16,8 @@ This project use
 - postgresql
 - docker-compose
 - swagger(yml)
-- d2(for create schema graph).
-  
+- d2(for create schema graph).   
+
 All codes are written by me.
 
 ## MVP
