@@ -1,36 +1,287 @@
 openapi: 3.0.0
 servers:
   - description: Fiber framework written by Go.
-    url: http://yusong-offx.link
+    url: http://localhost
+
 info:
   version: "1.0.0"
   title: Todo-list
   description: Simple todo-list API
 paths:
-  /:
-    get:
+  /login:
+    post:
       tags:
-        - Device
-        - Z-Wave
-      description: for request test
+        - Users
+      summary: Authentication by JWT
+      description: Authentication by login id and password
+      requestBody:
+        required: true
+        content:
+          application/json:  
+            schema:
+              $ref: '#/components/schemas/Users'
       responses:
-        '200':
-          description: OK
+        200:
+          description: Success to login
+          content:
+            application/json:
+              schema:
+                properties:
+                  user_id:
+                    type: integer
+                  jwt:
+                    type: string
+                    format: bearer
+                
+        500:
+          description: fail to login
           content:
             text/plain:
               schema:
                 type: string
-                example: OK
-  /login:
+                example:
+                  - no row; no user's login_id
+                  - wrong password
+                  - jwt generate error
+  
+  /signup:
     post:
-      description: Authentication by login id and password
-      tags:
-        - User
+      tags: 
+        - Users
+      summary: Sign up
+      description:
+        Create login data by user data.
+      requestBody:
+        required: true
+        content:
+          application/json:  
+            schema:
+              $ref: '#/components/schemas/Users'
       responses:
-        '200':
-          description: Success to login
+        201:
+          description: Success to sign up
           content:
             text/plain:
               schema:
                 type: string
                 example: create
+        500:
+          description:
+            database error include no unique login_id, server hash function error
+          content:
+            text/plain:
+              schema:
+                type: string
+                example:
+                  - pg error
+                  - hash error
+
+  /todo:
+    post:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary:
+        Create todo element
+      description:
+        Create todo element
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Todos.post'
+      responses:
+        201:
+          description: Success to create
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: create
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary: Update todo element
+      description:
+        Update todo element by todo_id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Todos.put'  
+      responses:
+        200:
+          description: Success to update
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /todo/user/{id}:
+    get:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary:
+        Get todo datas
+      description:
+        Get todo datas from database by user_id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success to get data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todos.get'
+        400:
+          description:
+            No parameter in request or no user_id in database
+          content:
+            text/plain:
+              schema:
+                type: string
+                example:
+                  - pg error
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        500:
+          description:
+            postgresql scan error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /todo/{id}:
+    delete:
+      tags:
+        - Todos
+      security:
+        - JWT: []
+      summary: Delete todo element
+      description: 
+        Delete todo element by todo_id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Success to delete
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  schemas:
+    Users:
+      description: 
+        \"login_password\" must limit maximum 72 bytes.<br>
+        Over 72 bytes bcrypt can't distinguish password.
+      type: object
+      required:
+        - login_id
+        - login_password
+      properties:
+        login_id:
+          type: string
+          minimum: 1
+          maximum: 20
+        login_password:
+          type: string
+          minimum: 1
+          maximum: 72
+    
+    Todos.get:
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        title:
+          type: string
+          minimum: 1
+          maximum: 50
+        contents:
+          type: string
+          maximum: 1000
+        create_date:
+          type: string
+          format: date-time
+        lastmodified_date:
+          type: string
+          format: date-time
+
+    Todos.post:
+      description:
+        Create_date's and lastmodified_date's default are time.now().
+      type: object
+      required:
+        - user_id
+        - title
+      properties:
+        user_id:
+          type: integer
+        title:
+          type: string
+          minimum: 1
+          maximum: 50
+        contents:
+          type: string
+          maximum: 1000
+
+    Todos.put:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        title:
+          type: string
+          minimum: 1
+          maximum: 50
+        contents:
+          type: string
+          maximum: 1000
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+

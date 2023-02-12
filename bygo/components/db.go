@@ -14,7 +14,7 @@ const (
 	port     = 5432
 )
 
-// Use global Instance
+// Use Global Instance
 var DB *sql.DB
 
 // Connect to postgresql

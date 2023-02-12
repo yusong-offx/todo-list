@@ -1,15 +1,10 @@
 package route
 
 import (
-	"fmt"
-
 	"github.com/gofiber/fiber/v2"
+	"github.com/yusong-offx/todo-list/components"
 )
 
 func AllGet(app *fiber.App) {
-	app.Get("/", func(c *fiber.Ctx) error {
-		fmt.Println("check")
-		return c.SendString("start")
-	})
-
+	app.Get("/todo/user/:id", components.ProtectByJWT(), components.GetTodoByUserID)
 }

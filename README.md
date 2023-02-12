@@ -1,26 +1,27 @@
-# todo-list
+# Todo-list
 ## Object
----
-This is simple todo-list for showing my code style.
+This is simple todo-list for showing my code style.   
+This project use flutter, fiber(Go framework), postgresql, docker-compose, swagger(yml), d2(create schema graph).   
+All codes are written by me.
 
 ## Struct
----
 ![structure](./assets/struct.svg)
 
 * All program service on container
 
-* No webserver(e.g. nginx...)
+* No webserver
 
-### Flutter
-* Based on mobile app
 
-### Fiber(Go)
-* Application server
-* No ORM
+## Details
+Please refer below link.   
+- [Flutter](./flutter/README.md)
+- [Fiber](./bygo/README.md)
+- [Postgresql](./postgresql/README.md)
 
-### Postgresql
-* Simple schema
-![shema](./postgresql/schema.svg)
+
+*About dockerfile you can check through this repo docker-compose.yml file.   
+*You must not write all secrete key in code. This project is not for deploying.
+
 
 ## Future
 ---
@@ -32,4 +33,23 @@ This is simple todo-list for showing my code style.
 - fiber - generate jwt
 - fiber - swagger
 ---
-- rust - made by rocket
+- rust - make by rocket
+---
+
+real future
+flutter
+- auto login
+
+fiber
+- redis cache
+- todo pages paging
+- logger
+- write test code
+
+postgresql
+- add fiber seach function and full-text search column
+
+docker-compose
+- migrate to k8s
+
+## fix readme typo

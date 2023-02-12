@@ -6,5 +6,7 @@ import (
 )
 
 func AllPost(app *fiber.App) {
-	app.Post("login", components.PostLoginFunc)
+	app.Post("/login", components.PostLoginFunc)
+	app.Post("/signup", components.PostSignUp)
+	app.Post("/todo", components.ProtectByJWT(), components.PostTodo)
 }

@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS TODOS;
 CREATE TABLE USERS (
     id serial primary key,
     login_id char(20) unique,
-    login_password char(60)
+    login_password varchar(60)
 );
 
 CREATE TABLE TODOS (
