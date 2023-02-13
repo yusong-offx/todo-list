@@ -6,17 +6,19 @@ services:
     build: ./postgresql
     volumes:
       - ./postgresql/pgdata:/var/lib/postgresql/data/pgdata
-
-  pgadmin4:
-    restart: always
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=hssong1024@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=docker123
-    ports:
-      - 5050:80
-    depends_on:
-      - db-postgresql
+  
+  # If you want to 
+  # use pgadmin4 remove comments.
+  # pgadmin4:
+  #   restart: always
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=hssong1024@gmail.com
+  #     - PGADMIN_DEFAULT_PASSWORD=docker123
+  #   ports:
+  #     - 5050:80
+  #   depends_on:
+  #     - db-postgresql
 
   app-bygo:
     build: ./bygo

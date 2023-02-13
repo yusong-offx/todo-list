@@ -4,4 +4,4 @@
 - Try to use singleton.
 - Try to re-use code.
 - Todo elements order by not done, newest modified.
-- Auto-refresh does not implement, you need to refresh passively.
+- Auto-refresh does not implement, you need to refresh each act passively.
