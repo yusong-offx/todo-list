@@ -5,7 +5,7 @@ import 'package:todo/main.dart';
 import 'package:todo/utils/models/todo.dart';
 
 class ApiService {
-  final serverURL = "http://yusong-offx.link";
+  final serverURL = "http://localhost.link";
   String? jwt;
   int? userID;
 

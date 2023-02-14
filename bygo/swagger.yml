@@ -2,8 +2,6 @@ openapi: 3.0.0
 servers:
   - description: Fiber framework written by Go.
     url: http://localhost
-  - description: Fiber framework written by Go.
-    url: http://yusong-offx.link
 
 info:
   version: "1.0.0"
